@@ -196,7 +196,7 @@ for group, weight in zip(caption_groups, weights):
     )
 
     caption_clip = (
-        ImageClip(caption_image)
+        ImageClip(np.array(caption_image))
         .set_start(current_time)
         .set_duration(duration)
         .set_position(("center", 1250))
