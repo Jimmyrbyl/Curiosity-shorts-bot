@@ -133,8 +133,10 @@ draw.text((80, 1450), "A STORY WORTH KNOWING",
 
 background.save("background.png")
 
-# Combine the background and AI narration into a video
+
+# Combine background, narration, and synchronized captions
 audio = AudioFileClip("narration.mp3")
+
 video = ImageClip("background.png").set_duration(audio.duration)
 
 video = video.resize(
@@ -146,9 +148,71 @@ video = video.resize(
     height=height
 )
 
+# Split narration into caption groups
+words = speech_text.split()
+caption_groups = [
+    words[i:i + 4] for i in range(0, len(words), 4)
+]
+
+# Estimate caption timing based on spoken text length
+weights = [sum(len(word) for word in group) for group in caption_groups]
+total_weight = sum(weights)
+
+caption_clips = []
+current_time = 0
+
+for group, weight in zip(caption_groups, weights):
+    duration = audio.duration * weight / total_weight
+
+    caption_image = Image.new(
+        "RGBA", (1080, 220), (0, 0, 0, 0)
+    )
+    caption_draw = ImageDraw.Draw(caption_image)
+
+    caption_text = " ".join(group)
+
+    caption_draw.rounded_rectangle(
+        (50, 20, 1030, 190),
+        radius=30,
+        fill=(0, 0, 0, 210)
+    )
+
+    bbox = caption_draw.textbbox(
+        (0, 0), caption_text, font=small_font
+    )
+
+    text_width = bbox[2] - bbox[0]
+    text_height = bbox[3] - bbox[1]
+
+    caption_draw.text(
+        ((1080 - text_width) / 2,
+         (220 - text_height) / 2 - bbox[1]),
+        caption_text,
+        font=small_font,
+        fill=(255, 220, 90),
+        stroke_width=2,
+        stroke_fill=(0, 0, 0)
+    )
+
+    caption_clip = (
+        ImageClip(caption_image)
+        .set_start(current_time)
+        .set_duration(duration)
+        .set_position(("center", 1250))
+    )
+
+    caption_clips.append(caption_clip)
+    current_time += duration
+
+# Combine everything
 video = video.set_audio(audio)
 
-video.write_videofile(
+final_video = CompositeVideoClip(
+    [video] + caption_clips,
+    size=(1080, 1920)
+).set_duration(audio.duration)
+
+final_video.write_videofile(
     "curiosity-short.mp4",
     fps=24,
     codec="libx264",
@@ -156,7 +220,11 @@ video.write_videofile(
 )
 
 audio.close()
+final_video.close()
 video.close()
+
+print("Your captioned video was created successfully!")
+
 
 print("Your video was created successfully!")
 
