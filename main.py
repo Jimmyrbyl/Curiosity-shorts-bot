@@ -94,6 +94,56 @@ with open("script.txt", "w", encoding="utf-8") as file:
 tts = gTTS(text=script, lang="en")
 tts.save("narration.mp3")
 print("Audio narration saved successfully!")
+# Create a vertical background for YouTube Shorts
+width, height = 1080, 1920
+background = Image.new("RGB", (width, height))
+draw = ImageDraw.Draw(background)
+
+# Dark blue gradient background
+for y in range(height):
+    shade = int(12 + (y / height) * 25)
+    draw.line((0, y, width, y), fill=(shade, shade, shade + 35))
+
+# Add episode title
+try:
+    font_path = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+    title_font = ImageFont.truetype(font_path, 76)
+    small_font = ImageFont.truetype(font_path, 38)
+except:
+    title_font = ImageFont.load_default()
+    small_font = ImageFont.load_default()
+
+draw.text((80, 550), "THE CURIOSITY FILES",
+          font=small_font, fill="white")
+
+draw.text((80, 700), episode["title"],
+          font=title_font, fill=(255, 210, 90))
+
+draw.text((80, 950), episode["category"],
+          font=small_font, fill="white")
+
+draw.text((80, 1450), "A STORY WORTH KNOWING",
+          font=small_font, fill=(180, 200, 230))
+
+background.save("background.png")
+
+# Combine the background and AI narration into a video
+audio = AudioFileClip("narration.mp3")
+video = ImageClip("background.png").with_duration(audio.duration)
+video = video.with_audio(audio)
+
+video.write_videofile(
+    "curiosity-short.mp4",
+    fps=24,
+    codec="libx264",
+    audio_codec="aac"
+)
+
+audio.close()
+video.close()
+
+print("Your video was created successfully!")
+
 print("Script saved successfully!")
 print("Generated:", datetime.now().strftime("%Y-%m-%d %H:%M"))
 
