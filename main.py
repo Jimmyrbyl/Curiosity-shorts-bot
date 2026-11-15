@@ -129,8 +129,8 @@ background.save("background.png")
 
 # Combine the background and AI narration into a video
 audio = AudioFileClip("narration.mp3")
-video = ImageClip("background.png").with_duration(audio.duration)
-video = video.with_audio(audio)
+video = ImageClip("background.png").set_duration(audio.duration)
+video = video.set_audio(audio)
 
 video.write_videofile(
     "curiosity-short.mp4",
