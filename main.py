@@ -89,7 +89,9 @@ print("=" * 45)
 
 with open("script.txt", "w", encoding="utf-8") as file:
     file.write(script)
-
+tts = gTTS(text=script, lang="en")
+tts.save("narration.mp3")
+print("Audio narration saved successfully!")
 print("Script saved successfully!")
 print("Generated:", datetime.now().strftime("%Y-%m-%d %H:%M"))
 
