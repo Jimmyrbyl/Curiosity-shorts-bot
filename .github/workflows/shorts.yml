@@ -28,3 +28,5 @@ jobs:
           path: |
             script.txt
             narration.mp3
+            curiosity-short.mp4
+            background.png
