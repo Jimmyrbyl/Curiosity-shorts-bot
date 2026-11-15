@@ -130,6 +130,16 @@ background.save("background.png")
 # Combine the background and AI narration into a video
 audio = AudioFileClip("narration.mp3")
 video = ImageClip("background.png").set_duration(audio.duration)
+
+video = video.resize(
+    lambda t: 1 + 0.05 * t / audio.duration
+).crop(
+    x_center=width / 2,
+    y_center=height / 2,
+    width=width,
+    height=height
+)
+
 video = video.set_audio(audio)
 
 video.write_videofile(
