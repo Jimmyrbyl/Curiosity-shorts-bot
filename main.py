@@ -91,7 +91,13 @@ print("=" * 45)
 
 with open("script.txt", "w", encoding="utf-8") as file:
     file.write(script)
-tts = gTTS(text=script, lang="en")
+speech_text = (
+    episode["hook"] + " " +
+    episode["story"] + " " +
+    episode["ending"]
+)
+
+tts = gTTS(text=speech_text, lang="en")
 tts.save("narration.mp3")
 print("Audio narration saved successfully!")
 # Create a vertical background for YouTube Shorts
