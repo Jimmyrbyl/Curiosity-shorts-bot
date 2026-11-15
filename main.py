@@ -1,6 +1,8 @@
 import random
 from datetime import datetime
 from gtts import gTTS
+from PIL import Image, ImageDraw, ImageFont
+from moviepy import ImageClip, AudioFileCLip
 episodes = [
     {
         "category": "Unbelievable Facts",
