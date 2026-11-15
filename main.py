@@ -2,6 +2,7 @@ import random
 from datetime import datetime
 from gtts import gTTS
 from PIL import Image, ImageDraw, ImageFont
+import numpy as np
 from moviepy.editor import ImageClip, AudioFileClip, CompositeVideoClip
 episodes = [
     {
